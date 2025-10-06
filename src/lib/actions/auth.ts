@@ -1,27 +1,13 @@
 "use server";
 
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "../supabase/server";
-import { signupSchema, loginSchema } from "../validations/authSchema";
+import { SignupFormData, LoginFormData } from "../validations/authSchema";
 
-export const signup = async (formData: FormData) => {
+export const signup = async (data: SignupFormData) => {
   const supabase = await createSupabaseServerClient();
-
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    first_name: formData.get("first_name") as string,
-    last_name: formData.get("last_name") as string,
-  };
-
-  const result = signupSchema.safeParse(data);
-
-  if (!result.success) {
-    return z.treeifyError(result.error);
-  }
 
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: data.email,
@@ -49,12 +35,40 @@ export const signup = async (formData: FormData) => {
     last_name: data.last_name,
   });
 
-  if (profileError) return { error: profileError.message };
+  if (profileError) {
+    return { error: profileError.message };
+  }
 
   revalidatePath("/", "layout");
   redirect("/notes");
 };
 
-export const login = async () => {};
+export const login = async (data: LoginFormData) => {
+  const supabase = await createSupabaseServerClient();
 
-export const logout = async () => {};
+  const { error } = await supabase.auth.signInWithPassword(data);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/notes");
+};
+
+export const logout = async () => {
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  redirect("/login");
+};
+
+export const getUser = async () => {
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user;
+};
