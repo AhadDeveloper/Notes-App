@@ -7,7 +7,6 @@ import { signup } from "@/lib/actions/auth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 
 export default function SignupPage() {
   const {
