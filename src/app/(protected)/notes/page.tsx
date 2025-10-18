@@ -1,13 +1,9 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
-import { logout } from "@/lib/actions/auth";
+import NotesList from "@/components/notes/NotesList";
 
 export default function Notes() {
   return (
-    <div>
-      Notes
-      <Button onClick={async () => await logout()}>Logout</Button>
-    </div>
+    <>
+      <NotesList />
+    </>
   );
 }
