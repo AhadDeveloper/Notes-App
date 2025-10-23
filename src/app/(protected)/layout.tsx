@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/actions/auth";
+import ClientAuthProvider from "@/components/auth/ClientAuthProvider";
 
 export default async function ProtectedLayout({
   children,
@@ -12,5 +13,5 @@ export default async function ProtectedLayout({
     return redirect("/login");
   }
 
-  return <>{children}</>;
+  return <ClientAuthProvider user={user}>{children}</ClientAuthProvider>;
 }
