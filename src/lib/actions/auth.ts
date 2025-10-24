@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "../supabase/server";
 import { SignupFormData, LoginFormData } from "../validations/authSchema";
@@ -40,7 +39,7 @@ export const signup = async (data: SignupFormData) => {
   }
 
   revalidatePath("/", "layout");
-  redirect("/notes");
+  return { success: true };
 };
 
 export const login = async (data: LoginFormData) => {
@@ -53,14 +52,14 @@ export const login = async (data: LoginFormData) => {
   }
 
   revalidatePath("/", "layout");
-  redirect("/notes");
+  return { success: true };
 };
 
 export const logout = async () => {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/login");
+  return { success: true };
 };
 
 export const getUser = async () => {

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/actions/auth";
-import ClientAuthProvider from "@/components/auth/ClientAuthProvider";
+import Navbar from "@/components/layout/Navbar";
 
 export default async function ProtectedLayout({
   children,
@@ -10,8 +10,13 @@ export default async function ProtectedLayout({
   const user = await getUser();
 
   if (!user) {
-    return redirect("/login");
+    redirect("/login");
   }
 
-  return <ClientAuthProvider user={user}>{children}</ClientAuthProvider>;
+  return (
+    <div>
+      <Navbar />
+      {children}
+    </div>
+  );
 }
